@@ -1,0 +1,473 @@
+Subject: [PATCH] add interface cloneable
+---
+Index: src/ShapePrinterName.java
+===================================================================
+diff --git a/src/ShapePrinterName.java b/src/ShapePrinterName.java
+deleted file mode 100644
+--- a/src/ShapePrinterName.java	(revision b7b505b13d67b182c81141570b9e3b26783dabd2)
++++ /dev/null	(revision b7b505b13d67b182c81141570b9e3b26783dabd2)
+@@ -1,5 +0,0 @@
+-public class ShapePrinterName {
+-    public void printShapeName(Shape shape) {
+-        System.out.println(shape.getName());
+-    }
+-}
+Index: src/Main.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Main.java b/src/Main.java
+--- a/src/Main.java	(revision b7b505b13d67b182c81141570b9e3b26783dabd2)
++++ b/src/Main.java	(date 1677770831986)
+@@ -3,7 +3,6 @@
+ 
+ public class Main {
+     public static void main(String[] args) {
+-//        ShapePrinterName printer = new ShapePrinterName();
+ 
+         Shape square = new Square(5.3, "Blue");
+         Shape rectangle = new Rectangle(23.4, 84.3, "Green");
+@@ -12,34 +11,58 @@
+         Shape circle = new Circle(12.3, "Green");
+ 
+         try {
+-            Shape clonedSquare = (Shape) square.clone();
+-            System.out.println(square==clonedSquare);
++            Shape clonedSquare = ((Square) square).clone();
++            System.out.println(square == clonedSquare);
+             System.out.println(square.equals(clonedSquare));
+-            System.out.println(square.toString());
+-            System.out.println(clonedSquare.toString());
++            System.out.println(square);
++            System.out.println(clonedSquare);
++            System.out.println(square.getDescription() + clonedSquare.getDescription());
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++
++        try {
++            Shape clonedTriangle = ((Triangle) triangle).clone();
++            System.out.println(triangle == clonedTriangle);
++            System.out.println(triangle.equals(clonedTriangle));
++            System.out.println(triangle);
++            System.out.println(clonedTriangle);
++            System.out.println(triangle.getDescription() + clonedTriangle.getDescription());
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++
++        try {
++            Shape clonedRectangle = ((Rectangle) rectangle).clone();
++            System.out.println(rectangle == clonedRectangle);
++            System.out.println(rectangle.equals(clonedRectangle));
++            System.out.println(rectangle);
++            System.out.println(clonedRectangle);
++            System.out.println(rectangle.getDescription() + clonedRectangle.getDescription());
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
++
++        try {
++            Shape clonedCube = ((Cube) cube).clone();
++            System.out.println(cube == clonedCube);
++            System.out.println(cube.equals(clonedCube));
++            System.out.println(cube);
++            System.out.println(clonedCube);
++            System.out.println(cube.getDescription() + clonedCube.getDescription());
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+ 
+-
+-//        List<Shape> shapeList = new ArrayList<>();
+-//        shapeList.add(square);
+-//        shapeList.add(rectangle);
+-//        shapeList.add(cube);
+-//        shapeList.add(triangle);
+-//        shapeList.add(circle);
+-
+-
+-//        for (Shape elem : shapeList) {
+-//            printer.printShapeName(elem);
+-//        }
+-
+-//        for (Shape elem : shapeList) {
+-//            System.out.println(elem.getDescription());
+-//        }
+-
+-//        for (Shape elem : shapeList) {
+-//            System.out.println(elem.getName());
+-//        }
++        try {
++            Shape clonedCircle = ((Circle) circle).clone();
++            System.out.println(circle == clonedCircle);
++            System.out.println(circle.equals(clonedCircle));
++            System.out.println(circle);
++            System.out.println(clonedCircle);
++            System.out.println(circle.getDescription() + clonedCircle.getDescription());
++        } catch (Exception e) {
++            e.printStackTrace();
++        }
+     }
+ }
+\ No newline at end of file
+Index: src/Rectangle.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Rectangle.java b/src/Rectangle.java
+--- a/src/Rectangle.java	(revision b7b505b13d67b182c81141570b9e3b26783dabd2)
++++ b/src/Rectangle.java	(date 1677768839073)
+@@ -1,7 +1,8 @@
++import java.util.Objects;
++
+ public class Rectangle extends Shape {
+-    public double width;
+-    public double height;
+-    public Color color;
++    private double width;
++    private double height;
+ 
+     public Rectangle(double width, double height, String colorName) {
+         this.width = width;
+@@ -17,6 +18,27 @@
+                 + "3. Color: " + color.getName().toLowerCase() + "\n";
+     }
+ 
++    @Override
++    public Rectangle clone() throws CloneNotSupportedException {
++        Rectangle rectangle = (Rectangle) super.clone();
++        rectangle.color = ColorFactory.getColor(rectangle.getColor().getName());
++        return rectangle;
++    }
++
++    @Override
++    public boolean equals(Object o) {
++        if (this == o) return true;
++        if (!(o instanceof Rectangle rectangle)) return false;
++        return Double.compare(rectangle.width, width) == 0
++                && Double.compare(rectangle.height, height) == 0
++                && color.equals(rectangle.color);
++    }
++
++    @Override
++    public int hashCode() {
++        return Objects.hash(width, height, color);
++    }
++
+     @Override
+     public String getName() {
+         return "rectangle";
+@@ -26,4 +48,20 @@
+     public double getArea() {
+         return width * height;
+     }
++
++    public double getWidth() {
++        return width;
++    }
++
++    public void setWidth(double width) {
++        this.width = width;
++    }
++
++    public double getHeight() {
++        return height;
++    }
++
++    public void setHeight(double height) {
++        this.height = height;
++    }
+ }
+Index: src/Circle.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Circle.java b/src/Circle.java
+--- a/src/Circle.java	(revision b7b505b13d67b182c81141570b9e3b26783dabd2)
++++ b/src/Circle.java	(date 1677770481138)
+@@ -1,6 +1,7 @@
++import java.util.Objects;
++
+ public class Circle extends Shape {
+     private double radius;
+-    private Color color;
+     private static final double PI = Math.PI;
+ 
+     public Circle(double radius, String colorName) {
+@@ -16,6 +17,26 @@
+                 + "3. Color: " + color.getName().toLowerCase() + "\n";
+     }
+ 
++    @Override
++    public Circle clone() throws CloneNotSupportedException {
++        Circle circle = (Circle) super.clone();
++        circle.color = ColorFactory.getColor(circle.getColor().getName());
++        return circle;
++    }
++
++    @Override
++    public boolean equals(Object o) {
++        if (this == o) return true;
++        if (!(o instanceof Circle circle)) return false;
++        return Double.compare(circle.radius, radius) == 0
++                && color.equals(circle.color);
++    }
++
++    @Override
++    public int hashCode() {
++        return Objects.hash(radius, color);
++    }
++
+     @Override
+     public String getName() {
+         return "circle";
+@@ -25,4 +46,12 @@
+     public double getArea() {
+         return Math.pow(radius, 2) * PI;
+     }
++
++    public double getRadius() {
++        return radius;
++    }
++
++    public void setRadius(double radius) {
++        this.radius = radius;
++    }
+ }
+Index: src/Cube.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Cube.java b/src/Cube.java
+--- a/src/Cube.java	(revision b7b505b13d67b182c81141570b9e3b26783dabd2)
++++ b/src/Cube.java	(date 1677770103799)
+@@ -1,6 +1,7 @@
++import java.util.Objects;
++
+ public class Cube extends Shape {
+-    public double width;
+-    public Color color;
++    private double width;
+ 
+     public Cube(double width, String colorName) {
+         this.width = width;
+@@ -15,6 +16,26 @@
+                 + "3. Color: " + color.getName().toLowerCase() + "\n";
+     }
+ 
++    @Override
++    public Cube clone() throws CloneNotSupportedException {
++        Cube cube = (Cube) super.clone();
++        cube.color = ColorFactory.getColor(cube.getColor().getName());
++        return cube;
++    }
++
++    @Override
++    public boolean equals(Object o) {
++        if (this == o) return true;
++        if (!(o instanceof Cube cube)) return false;
++        return Double.compare(cube.width, width) == 0
++                && color.equals(cube.color);
++    }
++
++    @Override
++    public int hashCode() {
++        return Objects.hash(width, color);
++    }
++
+     @Override
+     public String getName() {
+         return "cube";
+@@ -24,4 +45,12 @@
+     public double getArea() {
+         return 6 * width * width;
+     }
++
++    public double getWidth() {
++        return width;
++    }
++
++    public void setWidth(double width) {
++        this.width = width;
++    }
+ }
+Index: src/Color.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Color.java b/src/Color.java
+--- a/src/Color.java	(revision b7b505b13d67b182c81141570b9e3b26783dabd2)
++++ b/src/Color.java	(date 1677761067449)
+@@ -1,5 +1,5 @@
+ public class Color {
+-    public String name;
++    private final String name;
+ 
+     public Color(String name) {
+         this.name = name;
+Index: src/Shape.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Shape.java b/src/Shape.java
+--- a/src/Shape.java	(revision b7b505b13d67b182c81141570b9e3b26783dabd2)
++++ b/src/Shape.java	(date 1677761395945)
+@@ -1,12 +1,19 @@
+-public abstract class Shape implements Cloneable{
++public abstract class Shape implements Cloneable {
++    protected Color color;
++
+     public abstract String getDescription();
+ 
+     public abstract String getName();
+ 
+     public abstract double getArea();
+ 
+-    @Override
+-    public Object clone() throws CloneNotSupportedException {
+-        return super.clone();
++    //new
++    public Color getColor() {
++        return color;
+     }
++
++    public void setColor(Color color) {
++        this.color = color;
++    }
++    //
+ }
+Index: src/Square.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Square.java b/src/Square.java
+--- a/src/Square.java	(revision b7b505b13d67b182c81141570b9e3b26783dabd2)
++++ b/src/Square.java	(date 1677768839078)
+@@ -1,6 +1,7 @@
+-public class Square extends Shape{
+-    public double width;
+-    public Color color;
++import java.util.Objects;
++
++public class Square extends Shape {
++    private double width;
+ 
+     public Square(double width, String colorName) {
+         this.width = width;
+@@ -15,6 +16,26 @@
+                 + "3. Color: " + color.getName().toLowerCase() + "\n";
+     }
+ 
++    @Override
++    public Square clone() throws CloneNotSupportedException {
++        Square square = (Square) super.clone();
++        square.color = ColorFactory.getColor(square.getColor().getName());
++        return square;
++    }
++
++    @Override
++    public boolean equals(Object o) {
++        if (this == o) return true;
++        if (!(o instanceof Square square)) return false;
++        return Double.compare(square.width, width) == 0
++                && color.equals(square.color);
++    }
++
++    @Override
++    public int hashCode() {
++        return Objects.hash(width, color);
++    }
++
+     @Override
+     public String getName() {
+         return "square";
+@@ -24,4 +45,12 @@
+     public double getArea() {
+         return width * width;
+     }
++
++    public double getWidth() {
++        return width;
++    }
++
++    public void setWidth(double width) {
++        this.width = width;
++    }
+ }
+Index: src/Triangle.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/Triangle.java b/src/Triangle.java
+--- a/src/Triangle.java	(revision b7b505b13d67b182c81141570b9e3b26783dabd2)
++++ b/src/Triangle.java	(date 1677768839063)
+@@ -1,7 +1,8 @@
++import java.util.Objects;
++
+ public class Triangle extends Shape {
+-    public double width;
+-    public double height;
+-    public Color color;
++    private double width;
++    private double height;
+ 
+     public Triangle(double width, double height, String colorName) {
+         this.width = width;
+@@ -17,6 +18,27 @@
+                 + "3. Color: " + color.getName().toLowerCase() + "\n";
+     }
+ 
++    @Override
++    public Triangle clone() throws CloneNotSupportedException {
++        Triangle triangle = (Triangle) super.clone();
++        triangle.color = ColorFactory.getColor(triangle.getColor().getName());
++        return triangle;
++    }
++
++    @Override
++    public boolean equals(Object o) {
++        if (this == o) return true;
++        if (!(o instanceof Triangle triangle)) return false;
++        return Double.compare(triangle.width, width) == 0
++                && Double.compare(triangle.height, height) == 0
++                && color.equals(triangle.color);
++    }
++
++    @Override
++    public int hashCode() {
++        return Objects.hash(width, height, color);
++    }
++
+     @Override
+     public String getName() {
+         return "triangle";
+@@ -26,4 +48,20 @@
+     public double getArea() {
+         return width * height / 2.0;
+     }
++
++    public double getWidth() {
++        return width;
++    }
++
++    public void setWidth(double width) {
++        this.width = width;
++    }
++
++    public double getHeight() {
++        return height;
++    }
++
++    public void setHeight(double height) {
++        this.height = height;
++    }
+ }
