@@ -7,6 +7,7 @@
 
 - (xxx) xxx-xxxx
 - xxx-xxx-xxxx
+- 
 Приклад:
 
 Для файлу file.txt з наступним змістом:
